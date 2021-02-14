@@ -23,7 +23,6 @@ class Deck:
                 self.card_deck.append((value, color))
 
 
-
 class BlackJack:
     def __init__(self, deposit=1000, number_of_decks=1): 
         deck = Deck()
@@ -44,14 +43,29 @@ class BlackJack:
 
 
     def value_of_cards(self, cards):
-        value = 0
-        for card in cards:
-            if type(card[0]) == int:
-                value += card[0]
-            elif card[0] in 'JQK':
-                value += 10
-            ###
-        return value
+        values = [c[0] for c in cards] # pouze hodnoty, barvy nejsou podstatne
+        total_value = 0
+        for v in values:
+            if type(v) == int: # karty 2 - 10
+                total_value += v
+            elif v in 'JQK':
+                total_value += 10
+            else: # Ace
+                total_value += 11
+        
+        # eso muze byt 1 nebo 11
+        if total_value > 21 and 'A' in values:
+            number_of_aces = values.count('A')
+            for _ in range(number_of_aces):
+                total_value -= 10
+                if total_value <= 21:
+                    break
+
+        # check blackjack
+        if len(cards) == 2 and total_value == 21:
+            total_value = 'Blackjack'
+
+        return total_value
 
 
     def cards_to_str(self, cards):
@@ -61,12 +75,12 @@ class BlackJack:
         return result 
 
 
-    def print_cards_and_values(self, player, players_value, croupier, croupier_value):
+    def print_status(self, player, players_value, croupier, croupier_value):
         print(f"Croupier's cards: {self.cards_to_str(croupier)}   (value: {croupier_value})")
         print(f"Your cards: {self.cards_to_str(player)}   (value: {players_value})")
 
 
-    def play(self):
+    def play_game(self):
         while True:
             print()
             print("Your money: " + str(self.money))
@@ -77,26 +91,33 @@ class BlackJack:
             players_value = self.value_of_cards(players_cards)
             croupier_value = self.value_of_cards(croupiers_cards)
 
-            self.print_cards_and_values(players_cards, players_value, croupiers_cards, croupier_value)
+            self.print_status(players_cards, players_value, croupiers_cards, croupier_value)
 
+
+            # the player can draw more cards to improve his hand
             while True:
                 decision = input("Next card? (y/n) ")
                 print()
                 if decision == "y":
                     players_cards.append(self.deal_one_card())
                     players_value = self.value_of_cards(players_cards)
-                    self.print_cards_and_values(players_cards, players_value, croupiers_cards, croupier_value)
-                    if players_value > 21:
+                    self.print_status(players_cards, players_value, croupiers_cards, croupier_value)
+                    if players_value > 21: # busted
                         break
                 if decision == "n":
-                    while croupier_value < 17:
-                        croupiers_cards.append(self.deal_one_card())
-                        croupier_value = self.value_of_cards(croupiers_cards)
-                        self.print_cards_and_values(players_cards, players_value, croupiers_cards, croupier_value)
-                        print()
-                        if croupier_value < 17:
-                            sleep(5)
                     break
+
+            # if player isn't busted, it is the dealer's turn
+            if players_value <= 21:
+                while croupier_value < 17: # dealer must draw
+                    croupiers_cards.append(self.deal_one_card())
+                    croupier_value = self.value_of_cards(croupiers_cards)
+                    self.print_status(players_cards, players_value, croupiers_cards, croupier_value)
+                    print()
+                    if croupier_value < 17:
+                        sleep(6)
+
+            #evaluation
             if players_value > 21:
                 print()
                 print("You lose")
@@ -119,6 +140,3 @@ class BlackJack:
                     self.money -= int(bet)
 
 
-f = BlackJack(number_of_decks=3)
-#print(f.deal_cards())
-f.play()
