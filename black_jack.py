@@ -2,13 +2,32 @@ from random import randrange
 from time import sleep
 
 
+class Deck:
+    def __init__(self):
+        self.card_deck = []
+
+        list_of_values = []
+        # append number values 
+        for i in range(2,11): 
+            list_of_values.append(i)
+
+        # append high values
+        high_cards = ['J', 'Q', 'K', 'A']
+        for i in high_cards:
+            list_of_values.append(i)
+
+        # create one deck (52 cards)
+        colors = ['S', 'D', 'C', 'H']
+        for color in colors:
+            for value in list_of_values:
+                self.card_deck.append((value, color))
+
+
+
 class BlackJack:
     def __init__(self, deposit=1000, number_of_decks=1): 
-        card_deck = [(2, 'S'), (3, 'S'), (4, 'S'), (5, 'S'), (6, 'S'), (7, 'S'), (8, 'S'), (9, 'S'), (10, 'S'), ('J', 'S'), ('Q', 'S'), ('K', 'S'), ('A', 'S'), 
-                    (2, 'D'), (3, 'D'), (4, 'D'), (5, 'D'), (6, 'D'), (7, 'D'), (8, 'D'), (9, 'D'), (10, 'D'), ('J', 'D'), ('Q', 'D'), ('K', 'D'), ('A', 'D'), 
-                    (2, 'C'), (3, 'C'), (4, 'C'), (5, 'C'), (6, 'C'), (7, 'C'), (8, 'C'), (9, 'C'), (10, 'C'), ('J', 'C'), ('Q', 'C'), ('K', 'C'), ('A', 'C'), 
-                    (2, 'H'), (3, 'H'), (4, 'H'), (5, 'H'), (6, 'H'), (7, 'H'), (8, 'H'), (9, 'H'), (10, 'H'), ('J', 'H'), ('Q', 'H'), ('K', 'H'), ('A', 'H')]
-        self.all_cards = card_deck * number_of_decks
+        deck = Deck()
+        self.all_cards = deck.card_deck * number_of_decks
         self.money = deposit
 
 
@@ -100,5 +119,6 @@ class BlackJack:
                     self.money -= int(bet)
 
 
-f = BlackJack()
+f = BlackJack(number_of_decks=3)
+#print(f.deal_cards())
 f.play()
