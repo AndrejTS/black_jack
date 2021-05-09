@@ -1,3 +1,8 @@
-# black_jack
+# Blackjack
 
-Black Jack for one player
+Simple Blackjack game with GUI for one player
+
+## Requirements
+Python 3 
+
+[PyQt5](https://pypi.org/project/PyQt5/)
