@@ -1,6 +1,6 @@
 # Blackjack
 
-Simple Blackjack game with GUI for one player
+Simple Blackjack game for one player with GUI
 
 ## Requirements
 Python 3 
